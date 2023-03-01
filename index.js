@@ -7,7 +7,7 @@ const client = new Client({})
 
 
 const configuration = new Configuration({
-    apiKey: "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",
+    apiKey: "none",
 });
 const openai = new OpenAIApi(configuration);
 /* Chama as variaveis de ambiente 
