@@ -23,8 +23,7 @@ client.on('ready', () => {
 client.on('message', async msg => {
   const command = msg.body.split(' ')[0];
   // Coloque seu número sem o 9 onde tem o 9884233804
-  //const sender = msg.from.includes("9884233804") ? msg.to : msg.from;
-  const sender = msg.from;
+  const sender = msg.from.includes("9884233804") ? msg.to : msg.from;
 
   if (command.toLowerCase() === "/sticker") {
     await generateSticker(msg, sender);
@@ -61,14 +60,12 @@ async function generateSticker(msg, sender) {
 }
 
 async function dalle(msg, sender) {
-  const options = {
-    prompt: msg.body,
-    n: 1,
-    size: "1024x1024",
-  };
-
   try {
-    const response = await openai.createImage(options);
+    const response = await openai.createImage({
+      prompt: msg.body,
+      n: 1,
+      size: "1024x1024",
+    })
     const image = new MessageMedia("image/jpeg", response.data.data[0].image, "image.jpg");
     await client.sendMessage(sender, image, { caption: 'image.jpg' });
   } catch (e) {
@@ -77,26 +74,7 @@ async function dalle(msg, sender) {
 }
 
 async function gptchat(msg, sender) {
- /* const options = {
-    model: "text-davinci-003",
-    prompt: msg.body,
-    maxTokens: 100,
-    temperature: 0.7,
-   
-  };
-  console.log(msg.body)
-  try {
-    console.log(options)
-    console.log(`request= ${configuration}`)
-    console.log(`openai=${openai}`)
-    const response = await openai.createCompletion(options);
-    console.log(response)
-    const botResponse = response.data.choices[0].text.trim();
-    console.log(botResponse);
-    await client.sendMessage(sender, botResponse);
-  } catch (e) {
-    await msg.reply(`OpenAI retornou um erro: ${e}`);
-  }*/
+  try{
   const response = await openai.createCompletion({
     model: "text-davinci-003",
     prompt: msg.body,
@@ -104,4 +82,7 @@ async function gptchat(msg, sender) {
     max_tokens: 150
   });
   await client.sendMessage(sender, response.data.choices[0].text.trim())
+}catch(e){
+  await msg.reply(`Houve um erro no servidor:${e}`)
+}
 }
