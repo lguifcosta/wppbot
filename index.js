@@ -22,15 +22,18 @@ client.on('ready', () => {
 
 client.on('message', async msg => {
   const command = msg.body.split(' ')[0];
-  // Coloque seu número sem o 9 onde tem o 9884233804
-  const sender = msg.from.includes("9884233804") ? msg.to : msg.from;
+  const sender = msg.from.includes(process.env.MEU_NUMERO) ? msg.to : msg.from;
 
-  if (command.toLowerCase() === "/sticker") {
+  switch(command.toLowerCase()){
+    case "/sticker":
     await generateSticker(msg, sender);
-  } else if (command.toLowerCase() === "/bot") {
+    break;
+  case "/bot":
     await gptchat(msg, sender);
-  } else if (command.toLowerCase() === "/imagem") {
-    await dalle(msg, sender);
+    break;
+  case "/imagem":
+    await dalle(msg, sender)
+    break;
   }
 });
 
@@ -77,7 +80,7 @@ async function gptchat(msg, sender) {
   try{
   const response = await openai.createCompletion({
     model: "text-davinci-003",
-    prompt: msg.body,
+    prompt: `${msg.body}`,//caso pretenda fazer o comando funcionar como um prompt especifico, basta modificar essa area
     temperature: 0.9,
     max_tokens: 150
   });
